@@ -1,17 +1,38 @@
 import React from 'react';
-import './assets/styles/App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LoginForm from './components/LoginForm';
+import Dashboard from './components/Dashboard';
+import ToastComponent, { useToast } from './components/Toast';
+import './styles/global.css';
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  return token ? children : <Navigate to="/login" />;
+};
 
 function App() {
+  const { showToast, hideToast, toasts } = useToast();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>POS Dashboard</h1>
-        <p>Welcome to your Point of Sale Dashboard</p>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/login" element={<LoginForm showToast={showToast} />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+        </Routes>
+        <ToastComponent toasts={toasts} hideToast={hideToast} />
+      </div>
+    </Router>
   );
 }
 
 export default App;
-
-
