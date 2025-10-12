@@ -89,3 +89,55 @@ exports.userIdValidation = [
     .withMessage('User ID cannot be empty'),
 ];
 
+/**
+ * Validation rules for adding category
+ */
+exports.addCategoryValidation = [
+  body('categoryName')
+    .trim()
+    .notEmpty()
+    .withMessage('Category name is required')
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Category name must be between 2 and 100 characters')
+    .matches(/^[a-zA-Z0-9\s&-]+$/)
+    .withMessage('Category name can only contain letters, numbers, spaces, & and hyphens'),
+];
+
+/**
+ * Validation rules for updating category
+ */
+exports.updateCategoryValidation = [
+  body('categoryId')
+    .trim()
+    .notEmpty()
+    .withMessage('Category ID is required')
+    .isMongoId()
+    .withMessage('Invalid category ID format'),
+
+  body('categoryName')
+    .trim()
+    .notEmpty()
+    .withMessage('Category name is required')
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Category name must be between 2 and 100 characters')
+    .matches(/^[a-zA-Z0-9\s&-]+$/)
+    .withMessage('Category name can only contain letters, numbers, spaces, & and hyphens'),
+];
+
+/**
+ * Validation rules for updating category status
+ */
+exports.updateCategoryStatusValidation = [
+  body('categoryId')
+    .trim()
+    .notEmpty()
+    .withMessage('Category ID is required')
+    .isMongoId()
+    .withMessage('Invalid category ID format'),
+
+  body('isActive')
+    .notEmpty()
+    .withMessage('Status is required')
+    .isBoolean()
+    .withMessage('Status must be a boolean (true or false)'),
+];
