@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { itemAPI, categoryAPI } from '../services/api';
 import colors, { spacing, borderRadius, fontSize, fontWeight } from '../styles/colors';
 import Layout from './Layout';
+import EditItemModal from './EditItemModal';
 
 // Styled Components
 const Container = styled.div`
@@ -160,6 +161,15 @@ const Price = styled.div`
   color: ${colors.primary.purple};
 `;
 
+const Discount = styled.span`
+  font-weight: ${fontWeight.medium};
+  color: ${colors.status.success};
+  background-color: rgba(34, 197, 94, 0.1);
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${fontSize.sm};
+`;
+
 
 const CuisineType = styled.div`
   font-size: ${fontSize.sm};
@@ -258,6 +268,7 @@ const ErrorMessage = styled.div`
   font-size: ${fontSize.md};
 `;
 
+
 // Main Component
 const MenuItemsListing = ({ showToast }) => {
   const [items, setItems] = useState([]);
@@ -265,6 +276,10 @@ const MenuItemsListing = ({ showToast }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [editModal, setEditModal] = useState({
+    isOpen: false,
+    item: null
+  });
 
   useEffect(() => {
     fetchCategories();
@@ -387,16 +402,75 @@ const MenuItemsListing = ({ showToast }) => {
     }
   };
 
-  const handleEdit = (itemId) => {
-    console.log('Edit item:', itemId);
-    // TODO: Implement edit functionality
+  const handleEdit = (item) => {
+    setEditModal({
+      isOpen: true,
+      item: item
+    });
+  };
+
+  const handleUpdateItem = async (updatedData) => {
+    try {
+      const itemId = editModal.item._id || editModal.item.itemId;
+      
+      const requestData = {
+        itemId: itemId,
+        itemName: updatedData.itemName,
+        itemDescription: updatedData.itemDescription,
+        itemImage: updatedData.itemImage,
+        isVeg: updatedData.isVeg,
+        cuisine: updatedData.cuisine,
+        price: updatedData.price,
+        discount: updatedData.discount,
+        modifiers: updatedData.modifiers
+      };
+
+      const response = await itemAPI.update(requestData);
+
+      if (response.data.success) {
+        // Update the items list
+        setItems(prev => 
+          prev.map(it => 
+            (it._id === itemId || it.itemId === itemId)
+              ? { ...it, ...updatedData }
+              : it
+          )
+        );
+        
+        setEditModal({ isOpen: false, item: null });
+        
+        showToast(
+          `Item "${response.data.data.itemName}" updated successfully!`,
+          'success',
+          'Item Updated!',
+          3000
+        );
+      }
+    } catch (err) {
+      console.error('Error updating item:', err);
+      showToast(
+        'Failed to update item',
+        'error',
+        'Update Failed!',
+        3000
+      );
+    }
+  };
+
+  const handleCloseModal = () => {
+    setEditModal({ isOpen: false, item: null });
+    // Refresh items list after modal closes
+    if (selectedCategory === 'all') {
+      fetchItems();
+    } else {
+      fetchItemsByCategory(selectedCategory);
+    }
   };
 
   const handleDelete = (itemId) => {
     console.log('Delete item:', itemId);
     // TODO: Implement delete functionality
   };
-
 
   return (
     <Layout currentPage="items-listing">
@@ -430,21 +504,21 @@ const MenuItemsListing = ({ showToast }) => {
         ) : (
         <TableContainer>
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHeaderCell>Photo</TableHeaderCell>
-                <TableHeaderCell>Product Name</TableHeaderCell>
-                <TableHeaderCell>Description</TableHeaderCell>
-                <TableHeaderCell>Modifiers</TableHeaderCell>
-                <TableHeaderCell>Price</TableHeaderCell>
-                <TableHeaderCell>Cuisine Type</TableHeaderCell>
-                <TableHeaderCell>Food Type</TableHeaderCell>
-                <TableHeaderCell>Action</TableHeaderCell>
-              </TableRow>
-            </TableHeader>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHeaderCell>Photo</TableHeaderCell>
+                      <TableHeaderCell>Product Name</TableHeaderCell>
+                      <TableHeaderCell>Description</TableHeaderCell>
+                      <TableHeaderCell>Modifiers</TableHeaderCell>
+                      <TableHeaderCell>Price</TableHeaderCell>
+                      <TableHeaderCell>Discount</TableHeaderCell>
+                      <TableHeaderCell>Cuisine</TableHeaderCell>
+                      <TableHeaderCell>Food Type</TableHeaderCell>
+                      <TableHeaderCell>Action</TableHeaderCell>
+                    </TableRow>
+                  </TableHeader>
             <tbody>
               {items.map((item, index) => {
-                console.log(`Item ${index}:`, item.itemName, 'isActive:', item.isActive, 'ID:', item._id || item.itemId);
                 return (
                 <TableRow key={item._id || item.itemId}>
                   <TableCell>
@@ -467,7 +541,6 @@ const MenuItemsListing = ({ showToast }) => {
                   <TableCell>
                     <Modifiers>
                       {(() => {
-                        console.log('Item modifiers:', item.modifiers);
                         if (!item.modifiers || item.modifiers.length === 0) {
                           return 'No modifiers';
                         }
@@ -485,14 +558,17 @@ const MenuItemsListing = ({ showToast }) => {
                       })()}
                     </Modifiers>
                   </TableCell>
-                  <TableCell>
-                    <Price>${item.price || '0.00'}</Price>
-                  </TableCell>
-                  <TableCell>
-                    <CuisineType>
-                      {item.cuisine || item.categoryName || 'N/A'}
-                    </CuisineType>
-                  </TableCell>
+                        <TableCell>
+                          <Price>${item.price || '0.00'}</Price>
+                        </TableCell>
+                        <TableCell>
+                          <Discount>{item.discount || 0}%</Discount>
+                        </TableCell>
+                        <TableCell>
+                          <CuisineType>
+                            {item.cuisine || item.categoryName || 'N/A'}
+                          </CuisineType>
+                        </TableCell>
                   <TableCell>
                     <FoodType isVeg={item.isVeg} />
                   </TableCell>
@@ -504,7 +580,7 @@ const MenuItemsListing = ({ showToast }) => {
                         title={item.isActive ? 'Deactivate Item' : 'Activate Item'}
                       />
                       <ActionButton 
-                        onClick={() => handleEdit(item._id || item.itemId)}
+                        onClick={() => handleEdit(item)}
                         title="Edit Item"
                       >
                         ✏️
@@ -522,9 +598,18 @@ const MenuItemsListing = ({ showToast }) => {
               })}
             </tbody>
           </Table>
-        </TableContainer>
+          </TableContainer>
         )}
       </Container>
+
+      {/* Edit Item Modal */}
+      <EditItemModal
+        isOpen={editModal.isOpen}
+        item={editModal.item}
+        onClose={handleCloseModal}
+        onUpdate={handleUpdateItem}
+        showToast={showToast}
+      />
     </Layout>
   );
 };

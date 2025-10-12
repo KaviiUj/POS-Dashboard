@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/db');
 const logger = require('./utils/logger');
 const morganLogger = require('./middleware/morganLogger');
@@ -31,17 +32,24 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from uploads directory
+const uploadsPath = path.join(__dirname, 'uploads');
+logger.info(`Serving static files from: ${uploadsPath}`);
+app.use('/uploads', express.static(uploadsPath));
+
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const itemRoutes = require('./routes/itemRoutes');
 const staffRoutes = require('./routes/staffRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/item', itemRoutes);
 app.use('/api/staff', staffRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
