@@ -1,6 +1,8 @@
 // Authentication Controller
 const User = require('../models/User');
+const TokenBlacklist = require('../models/TokenBlacklist');
 const logger = require('../utils/logger');
+const jwt = require('jsonwebtoken');
 
 /**
  * @desc    Register a new user (Signup)
@@ -88,6 +90,183 @@ exports.signup = async (req, res, next) => {
     res.status(500).json({
       success: false,
       message: 'Server error during registration',
+      ...(process.env.NODE_ENV === 'development' && { error: error.message }),
+    });
+  }
+};
+
+/**
+ * @desc    Login user
+ * @route   POST /api/auth/login
+ * @access  Public
+ */
+exports.login = async (req, res, next) => {
+  try {
+    const { userName, passWord } = req.body;
+
+    logger.info('Login attempt', {
+      userName,
+      ip: req.ip,
+    });
+
+    // Check if user exists and select password field
+    const user = await User.findOne({ userName }).select('+passWord');
+
+    if (!user) {
+      logger.warn('Login failed: User not found', {
+        userName,
+        ip: req.ip,
+      });
+
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials',
+      });
+    }
+
+    // Check if user is active
+    if (!user.isActive) {
+      logger.warn('Login failed: User account is inactive', {
+        userName,
+        userId: user._id.toString(),
+        ip: req.ip,
+      });
+
+      return res.status(401).json({
+        success: false,
+        message: 'Account is inactive. Please contact administrator.',
+      });
+    }
+
+    // Verify password
+    const isPasswordMatch = await user.comparePassword(passWord);
+
+    if (!isPasswordMatch) {
+      logger.warn('Login failed: Invalid password', {
+        userName,
+        userId: user._id.toString(),
+        ip: req.ip,
+      });
+
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials',
+      });
+    }
+
+    // Generate JWT token
+    const accessToken = jwt.sign(
+      {
+        userId: user._id,
+        userName: user.userName,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRE || '7d',
+      }
+    );
+
+    logger.info('Login successful', {
+      userId: user._id.toString(),
+      userName: user.userName,
+      role: user.role,
+      roleName: user.getRoleName(),
+      ip: req.ip,
+    });
+
+    // Return success response with token
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        accessToken,
+        userId: user._id,
+        userName: user.userName,
+        role: user.role,
+        roleName: user.getRoleName(),
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    logger.error('Login error', {
+      message: error.message,
+      stack: error.stack,
+      userName: req.body.userName,
+    });
+
+    res.status(500).json({
+      success: false,
+      message: 'Server error during login',
+      ...(process.env.NODE_ENV === 'development' && { error: error.message }),
+    });
+  }
+};
+
+/**
+ * @desc    Logout user
+ * @route   GET /api/auth/logout
+ * @access  Private
+ */
+exports.logout = async (req, res, next) => {
+  try {
+    const token = req.token; // From auth middleware
+    const userId = req.user._id;
+    const userName = req.user.userName;
+
+    logger.info('Logout attempt', {
+      userId: userId.toString(),
+      userName,
+      ip: req.ip,
+    });
+
+    // Decode token to get expiration time
+    const decoded = jwt.decode(token);
+    const expiresAt = new Date(decoded.exp * 1000);
+
+    // Add token to blacklist
+    await TokenBlacklist.create({
+      token,
+      userId,
+      reason: 'logout',
+      expiresAt,
+    });
+
+    logger.info('Logout successful - Token blacklisted', {
+      userId: userId.toString(),
+      userName,
+      tokenExpiresAt: expiresAt,
+      ip: req.ip,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Logout successful',
+    });
+  } catch (error) {
+    // If token already blacklisted (duplicate key error)
+    if (error.code === 11000) {
+      logger.warn('Token already blacklisted', {
+        userId: req.user._id.toString(),
+        userName: req.user.userName,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Logout successful',
+      });
+    }
+
+    logger.error('Logout error', {
+      message: error.message,
+      stack: error.stack,
+      userId: req.user._id.toString(),
+    });
+
+    res.status(500).json({
+      success: false,
+      message: 'Server error during logout',
       ...(process.env.NODE_ENV === 'development' && { error: error.message }),
     });
   }
