@@ -150,15 +150,6 @@ const ButtonIcon = styled.span`
   font-size: ${fontSize.md};
 `;
 
-const ErrorMessage = styled.div`
-  background-color: rgba(231, 76, 60, 0.1);
-  color: ${colors.status.error};
-  padding: ${spacing.sm} ${spacing.md};
-  border-radius: ${borderRadius.sm};
-  font-size: ${fontSize.sm};
-  border: 1px solid rgba(231, 76, 60, 0.2);
-  margin-top: ${spacing.sm};
-`;
 
 // Main Login Form Component
 const LoginForm = ({ showToast }) => {

@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
+import CategoryListing from './components/CategoryListing';
+import CategoryCreate from './components/CategoryCreate';
+import MenuItemsListing from './components/MenuItemsListing';
 import ToastComponent, { useToast } from './components/Toast';
 import './styles/global.css';
 
@@ -24,6 +27,30 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/categories/listing" 
+            element={
+              <ProtectedRoute>
+                <CategoryListing showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/categories/create" 
+            element={
+              <ProtectedRoute>
+                <CategoryCreate showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/items/listing" 
+            element={
+              <ProtectedRoute>
+                <MenuItemsListing showToast={showToast} />
               </ProtectedRoute>
             } 
           />

@@ -1,103 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import colors, { spacing, borderRadius, fontSize, fontWeight } from '../styles/colors';
-import { authAPI } from '../services/api';
-import AlertDialog from './AlertDialog';
+import Layout from './Layout';
 
 // Styled Components
-const DashboardContainer = styled.div`
-  display: flex;
-  min-height: 100vh;
-  background-color: ${colors.background.tertiary};
-`;
-
-const Sidebar = styled.div`
-  width: 280px;
-  background-color: ${colors.background.primary};
-  border-right: 1px solid ${colors.border.light};
-  padding: ${spacing.lg} 0;
-  position: fixed;
-  height: 100vh;
-  overflow-y: auto;
-`;
-
-const SidebarHeader = styled.div`
-  padding: 0 ${spacing.lg} ${spacing.lg} ${spacing.lg};
-  border-bottom: 1px solid ${colors.border.light};
-  margin-bottom: ${spacing.lg};
-`;
-
-const Logo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.sm};
-`;
-
-const LogoIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, ${colors.primary.orange} 0%, #FFB84D 100%);
-  border-radius: ${borderRadius.sm};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: ${fontSize.lg};
-  color: white;
-  font-weight: ${fontWeight.bold};
-`;
-
-const LogoText = styled.h1`
-  font-size: ${fontSize.xl};
-  font-weight: ${fontWeight.bold};
-  color: ${colors.text.primary};
-  margin: 0;
-`;
-
-const MenuItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.md};
-  padding: ${spacing.md} ${spacing.lg};
-  color: ${props => props.active ? colors.text.white : colors.text.primary};
-  background-color: ${props => props.active ? colors.primary.purple : 'transparent'};
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-
-  &:hover {
-    background-color: ${props => props.active ? colors.primary.purpleHover : colors.background.tertiary};
-  }
-`;
-
-const MenuIcon = styled.div`
-  font-size: ${fontSize.md};
-  width: 20px;
-  text-align: center;
-`;
-
-const MenuText = styled.span`
-  font-size: ${fontSize.sm};
-  font-weight: ${fontWeight.medium};
-  flex: 1;
-`;
-
-const Badge = styled.span`
-  background-color: ${props => props.active ? colors.text.white : colors.status.success};
-  color: ${props => props.active ? colors.primary.purple : colors.text.white};
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-size: 10px;
-  font-weight: ${fontWeight.bold};
-  min-width: 20px;
-  text-align: center;
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  margin-left: 280px;
+const DashboardContent = styled.div`
   padding: ${spacing.lg};
 `;
+
 
 const Header = styled.div`
   background-color: ${colors.primary.purple};
@@ -412,63 +322,6 @@ const TrendingOrders = styled.div`
 
 // Main Dashboard Component
 const Dashboard = ({ showToast }) => {
-  const navigate = useNavigate();
-  const [alert, setAlert] = useState({
-    isOpen: false,
-    type: 'info',
-    title: '',
-    message: '',
-  });
-  const [logoutConfirm, setLogoutConfirm] = useState(false);
-
-  // Show logout confirmation
-  const showLogoutConfirmation = () => {
-    setLogoutConfirm(true);
-  };
-
-  // Handle logout confirmation
-  const handleLogoutConfirm = async () => {
-    setLogoutConfirm(false);
-    
-    try {
-      await authAPI.logout();
-      
-      // Clear local storage
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
-      // Show success toast
-      showToast('You have been logged out successfully.', 'success', 'Logout Successful!', 2000);
-
-      // Navigate to login after a short delay
-      setTimeout(() => {
-        navigate('/login');
-      }, 1000);
-
-    } catch (error) {
-      console.error('Logout error:', error);
-      
-      // Even if logout API fails, clear local storage and redirect
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
-      setAlert({
-        isOpen: true,
-        type: 'warning',
-        title: 'Logged Out',
-        message: 'You have been logged out locally.',
-      });
-
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
-    }
-  };
-
-  // Handle logout cancellation
-  const handleLogoutCancel = () => {
-    setLogoutConfirm(false);
-  };
 
   // Mock data
   const stats = [
@@ -535,88 +388,8 @@ const Dashboard = ({ showToast }) => {
   ];
 
   return (
-    <DashboardContainer>
-      <Sidebar>
-        <SidebarHeader>
-          <Logo>
-            <LogoIcon>🔥</LogoIcon>
-            <LogoText>Metor</LogoText>
-          </Logo>
-        </SidebarHeader>
-
-        <MenuItem active>
-          <MenuIcon>📊</MenuIcon>
-          <MenuText>DASHBOARD</MenuText>
-          <Badge active>9+</Badge>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>📋</MenuIcon>
-          <MenuText>ORDERS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>📦</MenuIcon>
-          <MenuText>PRODUCTS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>📁</MenuIcon>
-          <MenuText>CATEGORIES</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>👥</MenuIcon>
-          <MenuText>CUSTOMERS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>📄</MenuIcon>
-          <MenuText>MENU CARDS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>💳</MenuIcon>
-          <MenuText>POS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>📈</MenuIcon>
-          <MenuText>REPORTS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>🏍️</MenuIcon>
-          <MenuText>RIDERS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>🎁</MenuIcon>
-          <MenuText>OFFERS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>📍</MenuIcon>
-          <MenuText>LOCATIONS</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>🖼️</MenuIcon>
-          <MenuText>MEDIA</MenuText>
-        </MenuItem>
-
-        <MenuItem>
-          <MenuIcon>⚙️</MenuIcon>
-          <MenuText>STORE SETTINGS</MenuText>
-        </MenuItem>
-
-        <MenuItem onClick={showLogoutConfirmation} style={{ marginTop: 'auto', borderTop: '1px solid #f0f0f0', paddingTop: spacing.md }}>
-          <MenuIcon>🚪</MenuIcon>
-          <MenuText>LOGOUT</MenuText>
-        </MenuItem>
-      </Sidebar>
-
-      <MainContent>
+    <Layout currentPage="dashboard">
+      <DashboardContent>
         <Header>
           <HeaderLeft>
             <SearchBar>
@@ -739,28 +512,8 @@ const Dashboard = ({ showToast }) => {
             </div>
           </ChartCard>
         </BottomGrid>
-
-        <AlertDialog
-          isOpen={alert.isOpen}
-          type={alert.type}
-          title={alert.title}
-          message={alert.message}
-          onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
-        />
-
-        <AlertDialog
-          isOpen={logoutConfirm}
-          type="info"
-          title="Confirm Logout"
-          message="Do you want to logout? You will need to login again to access the dashboard."
-          onClose={handleLogoutCancel}
-          onConfirm={handleLogoutConfirm}
-          confirmText="Yes, Logout"
-          cancelText="Cancel"
-          showCancel={true}
-        />
-      </MainContent>
-    </DashboardContainer>
+      </DashboardContent>
+    </Layout>
   );
 };
 

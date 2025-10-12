@@ -1,5 +1,6 @@
 // Category Controller
 const Category = require('../models/Category');
+const Item = require('../models/Item');
 const logger = require('../utils/logger');
 
 /**
@@ -411,6 +412,52 @@ exports.updateCategoryStatus = async (req, res, next) => {
     category.updatedBy = userId;
     await category.save();
 
+    // Update all items under this category based on the new status
+    let affectedItemsCount = 0;
+    let statusMessage = '';
+    
+    if (!isActive) {
+      // If category is being deactivated, deactivate all items under this category
+      const result = await Item.updateMany(
+        { categoryId: categoryId, isActive: true },
+        { 
+          $set: { 
+            isActive: false,
+            updatedBy: userId 
+          } 
+        }
+      );
+      affectedItemsCount = result.modifiedCount;
+      statusMessage = affectedItemsCount > 0 ? `. ${affectedItemsCount} item(s) also deactivated.` : '';
+
+      logger.info('Deactivated items under category', {
+        categoryId: category._id.toString(),
+        categoryName: category.categoryName,
+        itemsDeactivated: affectedItemsCount,
+        updatedBy: userId.toString(),
+      });
+    } else {
+      // If category is being activated, activate all items under this category
+      const result = await Item.updateMany(
+        { categoryId: categoryId, isActive: false },
+        { 
+          $set: { 
+            isActive: true,
+            updatedBy: userId 
+          } 
+        }
+      );
+      affectedItemsCount = result.modifiedCount;
+      statusMessage = affectedItemsCount > 0 ? `. ${affectedItemsCount} item(s) also activated.` : '';
+
+      logger.info('Activated items under category', {
+        categoryId: category._id.toString(),
+        categoryName: category.categoryName,
+        itemsActivated: affectedItemsCount,
+        updatedBy: userId.toString(),
+      });
+    }
+
     // Populate user details
     await category.populate('updatedBy', 'userName role');
 
@@ -419,17 +466,19 @@ exports.updateCategoryStatus = async (req, res, next) => {
       categoryName: category.categoryName,
       oldStatus,
       newStatus: category.isActive,
+      itemsAffected: affectedItemsCount,
       updatedBy: userId.toString(),
       updatedByName: userName,
     });
 
     res.status(200).json({
       success: true,
-      message: `Category ${isActive ? 'activated' : 'deactivated'} successfully`,
+      message: `Category ${isActive ? 'activated' : 'deactivated'} successfully${statusMessage}`,
       data: {
         categoryId: category._id,
         categoryName: category.categoryName,
         isActive: category.isActive,
+        itemsAffected: affectedItemsCount,
         updatedBy: category.updatedBy
           ? {
               userId: category.updatedBy._id,
