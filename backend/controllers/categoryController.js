@@ -9,13 +9,14 @@ const logger = require('../utils/logger');
  */
 exports.addCategory = async (req, res, next) => {
   try {
-    const { categoryName } = req.body;
+    const { categoryName, discount } = req.body;
     const userId = req.user._id; // From auth middleware
     const userName = req.user.userName;
     const userRole = req.user.role;
 
     logger.info('Add category attempt', {
       categoryName,
+      discount,
       userId: userId.toString(),
       userName,
       userRole,
@@ -55,10 +56,17 @@ exports.addCategory = async (req, res, next) => {
     }
 
     // Create new category
-    const category = await Category.create({
+    const categoryData = {
       categoryName,
       createdBy: userId,
-    });
+    };
+
+    // Add discount if provided
+    if (discount !== undefined) {
+      categoryData.discount = discount;
+    }
+
+    const category = await Category.create(categoryData);
 
     // Populate createdBy field with user details
     await category.populate('createdBy', 'userName role');
@@ -77,6 +85,7 @@ exports.addCategory = async (req, res, next) => {
       data: {
         categoryId: category._id,
         categoryName: category.categoryName,
+        discount: category.discount,
         isActive: category.isActive,
         createdBy: {
           userId: category.createdBy._id,
@@ -154,6 +163,7 @@ exports.getAllCategories = async (req, res, next) => {
       data: categories.map((category) => ({
         categoryId: category._id,
         categoryName: category.categoryName,
+        discount: category.discount,
         isActive: category.isActive,
         createdBy: category.createdBy
           ? {
@@ -192,7 +202,7 @@ exports.getAllCategories = async (req, res, next) => {
  */
 exports.updateCategory = async (req, res, next) => {
   try {
-    const { categoryId, categoryName } = req.body;
+    const { categoryId, categoryName, discount } = req.body;
     const userId = req.user._id;
     const userName = req.user.userName;
     const userRole = req.user.role;
@@ -200,6 +210,7 @@ exports.updateCategory = async (req, res, next) => {
     logger.info('Update category attempt', {
       categoryId,
       categoryName,
+      discount,
       userId: userId.toString(),
       userName,
       userRole,
@@ -264,6 +275,9 @@ exports.updateCategory = async (req, res, next) => {
 
     // Update category
     category.categoryName = categoryName;
+    if (discount !== undefined) {
+      category.discount = discount;
+    }
     category.updatedBy = userId;
     await category.save();
 
@@ -284,6 +298,7 @@ exports.updateCategory = async (req, res, next) => {
       data: {
         categoryId: category._id,
         categoryName: category.categoryName,
+        discount: category.discount,
         isActive: category.isActive,
         createdBy: category.createdBy
           ? {
@@ -478,6 +493,7 @@ exports.getActiveCategories = async (req, res, next) => {
       data: categories.map((category) => ({
         categoryId: category._id,
         categoryName: category.categoryName,
+        discount: category.discount,
         createdAt: category.createdAt,
       })),
     });

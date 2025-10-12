@@ -34,10 +34,14 @@ app.use(express.urlencoded({ extended: true }));
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const itemRoutes = require('./routes/itemRoutes');
+const staffRoutes = require('./routes/staffRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/category', categoryRoutes);
+app.use('/api/item', itemRoutes);
+app.use('/api/staff', staffRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {

@@ -11,6 +11,12 @@ const categorySchema = new mongoose.Schema(
       minlength: [2, 'Category name must be at least 2 characters long'],
       maxlength: [100, 'Category name cannot exceed 100 characters'],
     },
+    discount: {
+      type: Number,
+      default: 0,
+      min: [0, 'Discount cannot be negative'],
+      max: [100, 'Discount cannot exceed 100%'],
+    },
     isActive: {
       type: Boolean,
       default: true,
