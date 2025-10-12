@@ -4,6 +4,7 @@ import { itemAPI, categoryAPI } from '../services/api';
 import colors, { spacing, borderRadius, fontSize, fontWeight } from '../styles/colors';
 import Layout from './Layout';
 import EditItemModal from './EditItemModal';
+import AlertDialog from './AlertDialog';
 
 // Styled Components
 const Container = styled.div`
@@ -280,6 +281,11 @@ const MenuItemsListing = ({ showToast }) => {
     isOpen: false,
     item: null
   });
+  const [deleteDialog, setDeleteDialog] = useState({
+    isOpen: false,
+    itemId: null,
+    itemName: null
+  });
 
   useEffect(() => {
     fetchCategories();
@@ -467,9 +473,52 @@ const MenuItemsListing = ({ showToast }) => {
     }
   };
 
-  const handleDelete = (itemId) => {
-    console.log('Delete item:', itemId);
-    // TODO: Implement delete functionality
+  const handleDelete = (item) => {
+    setDeleteDialog({
+      isOpen: true,
+      itemId: item._id || item.itemId,
+      itemName: item.itemName
+    });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const response = await itemAPI.delete({
+        itemId: deleteDialog.itemId
+      });
+
+      if (response.data.success) {
+        // Remove item from the list
+        setItems(prevItems => 
+          prevItems.filter(item => 
+            (item._id !== deleteDialog.itemId) && (item.itemId !== deleteDialog.itemId)
+          )
+        );
+
+        // Close dialog
+        setDeleteDialog({ isOpen: false, itemId: null, itemName: null });
+
+        // Show success toast
+        showToast(
+          `Item "${response.data.data.itemName}" deleted successfully!`,
+          'success',
+          'Item Deleted!',
+          3000
+        );
+      }
+    } catch (err) {
+      console.error('Error deleting item:', err);
+      showToast(
+        'Failed to delete item',
+        'error',
+        'Delete Failed!',
+        3000
+      );
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteDialog({ isOpen: false, itemId: null, itemName: null });
   };
 
   return (
@@ -586,7 +635,7 @@ const MenuItemsListing = ({ showToast }) => {
                         ✏️
                       </ActionButton>
                       <ActionButton 
-                        onClick={() => handleDelete(item._id || item.itemId)}
+                        onClick={() => handleDelete(item)}
                         title="Delete Item"
                       >
                         🗑️
@@ -609,6 +658,19 @@ const MenuItemsListing = ({ showToast }) => {
         onClose={handleCloseModal}
         onUpdate={handleUpdateItem}
         showToast={showToast}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        title="Delete Item"
+        message={`Are you sure you want to delete "${deleteDialog.itemName}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="error"
+        showCancel={true}
       />
     </Layout>
   );
