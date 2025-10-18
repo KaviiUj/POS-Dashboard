@@ -153,6 +153,7 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
   const [logoutConfirm, setLogoutConfirm] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [itemsDropdownOpen, setItemsDropdownOpen] = useState(false);
+  const [staffDropdownOpen, setStaffDropdownOpen] = useState(false);
 
   // Determine if category dropdown should stay open
   const isCategoryDropdownActive = currentPage === 'categories' || currentPage === 'categories-listing' || currentPage === 'categories-create';
@@ -167,6 +168,13 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
   // Determine which items dropdown item is active
   const isItemsListingActive = currentPage === 'items-listing';
   const isItemsCreateActive = currentPage === 'items-create';
+
+  // Determine if staff dropdown should stay open
+  const isStaffDropdownActive = currentPage === 'staff' || currentPage === 'staff-listing' || currentPage === 'staff-create';
+  
+  // Determine which staff dropdown item is active
+  const isStaffListingActive = currentPage === 'staff-listing';
+  const isStaffCreateActive = currentPage === 'staff-create';
 
   // Handle logout confirmation
   const handleLogoutConfirm = async () => {
@@ -207,6 +215,11 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
     setItemsDropdownOpen(!itemsDropdownOpen);
   };
 
+  // Handle staff dropdown toggle
+  const toggleStaffDropdown = () => {
+    setStaffDropdownOpen(!staffDropdownOpen);
+  };
+
   // Keep dropdown open when on category pages
   React.useEffect(() => {
     if (isCategoryDropdownActive) {
@@ -220,6 +233,13 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
       setItemsDropdownOpen(true);
     }
   }, [isItemsDropdownActive]);
+
+  // Keep dropdown open when on staff pages
+  React.useEffect(() => {
+    if (isStaffDropdownActive) {
+      setStaffDropdownOpen(true);
+    }
+  }, [isStaffDropdownActive]);
 
   // Handle category listing navigation
   const handleCategoryListing = () => {
@@ -240,6 +260,17 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
 
   const handleItemsCreate = () => {
     navigate('/items/create');
+    // Keep dropdown open - don't toggle
+  };
+
+  // Handle staff navigation
+  const handleStaffListing = () => {
+    navigate('/staff/listing');
+    // Keep dropdown open - don't toggle
+  };
+
+  const handleStaffCreate = () => {
+    navigate('/staff/create');
     // Keep dropdown open - don't toggle
   };
 
@@ -297,6 +328,24 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
               <DropdownItem onClick={handleItemsCreate} active={isItemsCreateActive}>
                 <MenuIcon>➕</MenuIcon>
                 <MenuText>Add New</MenuText>
+              </DropdownItem>
+            </MenuDropdown>
+          </div>
+
+          <div>
+            <MenuItem onClick={toggleStaffDropdown} active={isStaffDropdownActive}>
+              <MenuIcon active={isStaffDropdownActive}>👥</MenuIcon>
+              <MenuText>STAFF</MenuText>
+              <DropdownIcon isOpen={staffDropdownOpen} active={isStaffDropdownActive}>▼</DropdownIcon>
+            </MenuItem>
+            <MenuDropdown isOpen={staffDropdownOpen}>
+              <DropdownItem onClick={handleStaffListing} active={isStaffListingActive}>
+                <MenuIcon>📋</MenuIcon>
+                <MenuText>Staff Listing</MenuText>
+              </DropdownItem>
+              <DropdownItem onClick={handleStaffCreate} active={isStaffCreateActive}>
+                <MenuIcon>➕</MenuIcon>
+                <MenuText>Create Staff</MenuText>
               </DropdownItem>
             </MenuDropdown>
           </div>

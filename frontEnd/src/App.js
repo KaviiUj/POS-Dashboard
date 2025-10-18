@@ -6,6 +6,8 @@ import CategoryListing from './components/CategoryListing';
 import CategoryCreate from './components/CategoryCreate';
 import MenuItemsListing from './components/MenuItemsListing';
 import CreateItem from './components/CreateItem';
+import StaffListing from './components/StaffListing';
+import CreateStaff from './components/CreateStaff';
 import ToastComponent, { useToast } from './components/Toast';
 import './styles/global.css';
 
@@ -60,6 +62,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateItem showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/staff/listing" 
+            element={
+              <ProtectedRoute>
+                <StaffListing showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/staff/create" 
+            element={
+              <ProtectedRoute>
+                <CreateStaff showToast={showToast} />
               </ProtectedRoute>
             } 
           />
