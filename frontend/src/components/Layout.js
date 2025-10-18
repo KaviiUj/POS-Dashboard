@@ -284,6 +284,11 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
     navigate('/table');
   };
 
+  // Handle QR navigation
+  const handleQR = () => {
+    navigate('/qr');
+  };
+
   return (
     <LayoutContainer>
       <Sidebar>
@@ -359,6 +364,12 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
           <MenuItem onClick={handleTable} active={currentPage === 'table'}>
             <MenuIcon active={currentPage === 'table'}>🪑</MenuIcon>
             <MenuText>TABLE</MenuText>
+          </MenuItem>
+
+          {/* QR Section */}
+          <MenuItem onClick={handleQR} active={currentPage === 'qr'}>
+            <MenuIcon active={currentPage === 'qr'}>📱</MenuIcon>
+            <MenuText>QR</MenuText>
           </MenuItem>
         </div>
 

@@ -9,6 +9,7 @@ import CreateItem from './components/CreateItem';
 import StaffListing from './components/StaffListing';
 import CreateStaff from './components/CreateStaff';
 import TableListing from './components/TableListing';
+import QR from './components/QR';
 import ToastComponent, { useToast } from './components/Toast';
 import './styles/global.css';
 
@@ -87,6 +88,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <TableListing showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/qr" 
+            element={
+              <ProtectedRoute>
+                <QR showToast={showToast} />
               </ProtectedRoute>
             } 
           />
