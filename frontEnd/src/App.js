@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import CategoryListing from './components/CategoryListing';
 import CategoryCreate from './components/CategoryCreate';
 import MenuItemsListing from './components/MenuItemsListing';
+import CreateItem from './components/CreateItem';
 import ToastComponent, { useToast } from './components/Toast';
 import './styles/global.css';
 
@@ -51,6 +52,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MenuItemsListing showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/items/create" 
+            element={
+              <ProtectedRoute>
+                <CreateItem showToast={showToast} />
               </ProtectedRoute>
             } 
           />

@@ -162,10 +162,11 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
   const isCategoryCreateActive = currentPage === 'categories-create';
 
   // Determine if items dropdown should stay open
-  const isItemsDropdownActive = currentPage === 'items' || currentPage === 'items-listing';
+  const isItemsDropdownActive = currentPage === 'items' || currentPage === 'items-listing' || currentPage === 'items-create';
   
   // Determine which items dropdown item is active
   const isItemsListingActive = currentPage === 'items-listing';
+  const isItemsCreateActive = currentPage === 'items-create';
 
   // Handle logout confirmation
   const handleLogoutConfirm = async () => {
@@ -198,19 +199,11 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
 
   // Handle category dropdown toggle
   const toggleCategoryDropdown = () => {
-    // If we're on a category page, don't close the dropdown
-    if (isCategoryDropdownActive) {
-      return;
-    }
     setCategoryDropdownOpen(!categoryDropdownOpen);
   };
 
   // Handle items dropdown toggle
   const toggleItemsDropdown = () => {
-    // If we're on an items page, don't close the dropdown
-    if (isItemsDropdownActive) {
-      return;
-    }
     setItemsDropdownOpen(!itemsDropdownOpen);
   };
 
@@ -242,6 +235,11 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
   // Handle items navigation
   const handleItemsListing = () => {
     navigate('/items/listing');
+    // Keep dropdown open - don't toggle
+  };
+
+  const handleItemsCreate = () => {
+    navigate('/items/create');
     // Keep dropdown open - don't toggle
   };
 
@@ -295,6 +293,10 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
               <DropdownItem onClick={handleItemsListing} active={isItemsListingActive}>
                 <MenuIcon>📋</MenuIcon>
                 <MenuText>Listing</MenuText>
+              </DropdownItem>
+              <DropdownItem onClick={handleItemsCreate} active={isItemsCreateActive}>
+                <MenuIcon>➕</MenuIcon>
+                <MenuText>Add New</MenuText>
               </DropdownItem>
             </MenuDropdown>
           </div>
