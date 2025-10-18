@@ -473,3 +473,51 @@ exports.deleteStaffValidation = [
     .withMessage('Invalid staff ID format'),
 ];
 
+/**
+ * Validation rules for creating table
+ */
+exports.createTableValidation = [
+  body('tableName')
+    .trim()
+    .notEmpty()
+    .withMessage('Table name is required')
+    .isLength({ min: 1, max: 50 })
+    .withMessage('Table name must be between 1 and 50 characters'),
+
+  body('pax')
+    .optional()
+    .isInt({ min: 1, max: 50 })
+    .withMessage('Pax must be a number between 1 and 50'),
+
+  body('isAvailable')
+    .optional()
+    .isBoolean()
+    .withMessage('isAvailable must be a boolean (true or false)'),
+
+  body('orderId')
+    .optional()
+    .custom((value) => {
+      // Allow null, empty string, or valid MongoDB ObjectId
+      if (value === null || value === '') {
+        return true;
+      }
+      // Check if it's a valid MongoDB ObjectId format
+      if (!/^[0-9a-fA-F]{24}$/.test(value)) {
+        throw new Error('Invalid order ID format');
+      }
+      return true;
+    }),
+];
+
+/**
+ * Validation rules for deleting table
+ */
+exports.deleteTableValidation = [
+  body('tableId')
+    .trim()
+    .notEmpty()
+    .withMessage('Table ID is required')
+    .isMongoId()
+    .withMessage('Invalid table ID format'),
+];
+
