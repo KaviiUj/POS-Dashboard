@@ -279,6 +279,11 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
     navigate('/dashboard');
   };
 
+  // Handle table navigation
+  const handleTable = () => {
+    navigate('/table');
+  };
+
   return (
     <LayoutContainer>
       <Sidebar>
@@ -349,6 +354,12 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
               </DropdownItem>
             </MenuDropdown>
           </div>
+
+          {/* Table Section */}
+          <MenuItem onClick={handleTable} active={currentPage === 'table'}>
+            <MenuIcon active={currentPage === 'table'}>🪑</MenuIcon>
+            <MenuText>TABLE</MenuText>
+          </MenuItem>
         </div>
 
         <div style={{ 

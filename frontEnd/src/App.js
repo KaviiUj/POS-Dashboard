@@ -8,6 +8,7 @@ import MenuItemsListing from './components/MenuItemsListing';
 import CreateItem from './components/CreateItem';
 import StaffListing from './components/StaffListing';
 import CreateStaff from './components/CreateStaff';
+import TableListing from './components/TableListing';
 import ToastComponent, { useToast } from './components/Toast';
 import './styles/global.css';
 
@@ -78,6 +79,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CreateStaff showToast={showToast} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/table" 
+            element={
+              <ProtectedRoute>
+                <TableListing showToast={showToast} />
               </ProtectedRoute>
             } 
           />

@@ -74,6 +74,12 @@ export const staffAPI = {
   delete: (staffData) => api.post('/staff/delete', staffData),
 };
 
+export const tableAPI = {
+  getAll: () => api.get('/table/all'),
+  create: (tableData) => api.post('/table/create', tableData),
+  delete: (tableData) => api.post('/table/delete', tableData),
+};
+
 export const uploadAPI = {
   uploadImage: (formData) => api.post('/upload/image', formData, {
     headers: {
