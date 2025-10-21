@@ -184,7 +184,7 @@ const AlertDialog = ({
   };
 
   return (
-    <Overlay onClick={onClose}>
+    <Overlay onClick={onClose ? onClose : undefined}>
       <Dialog onClick={(e) => e.stopPropagation()}>
         <IconContainer type={type}>
           <Icon type={type}>{getIcon()}</Icon>
@@ -194,7 +194,7 @@ const AlertDialog = ({
         <Message>{message}</Message>
         
         <ButtonContainer>
-          {showCancel && (
+          {showCancel && onClose && (
             <Button variant="secondary" onClick={onClose}>
               {cancelText}
             </Button>

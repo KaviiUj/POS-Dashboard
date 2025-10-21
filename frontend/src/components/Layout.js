@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import colors, { spacing, borderRadius, fontSize, fontWeight } from '../styles/colors';
 import { authAPI } from '../services/api';
 import AlertDialog from './AlertDialog';
+import useInactivityTimeout from '../hooks/useInactivityTimeout';
+import { SESSION_CONFIG } from '../constants/config';
 
 // Styled Components
 const LayoutContainer = styled.div`
@@ -151,9 +153,15 @@ const MainContent = styled.div`
 const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
   const navigate = useNavigate();
   const [logoutConfirm, setLogoutConfirm] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [itemsDropdownOpen, setItemsDropdownOpen] = useState(false);
   const [staffDropdownOpen, setStaffDropdownOpen] = useState(false);
+
+  // Inactivity timeout - configured in constants/config.js
+  useInactivityTimeout(SESSION_CONFIG.INACTIVITY_TIMEOUT_MINUTES * 60 * 1000, () => {
+    setSessionExpired(true);
+  });
 
   // Determine if category dropdown should stay open
   const isCategoryDropdownActive = currentPage === 'categories' || currentPage === 'categories-listing' || currentPage === 'categories-create';
@@ -196,6 +204,23 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
       // Even if logout API fails, clear local storage and redirect
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      navigate('/login');
+    }
+  };
+
+  // Handle session expired - calls logout API and redirects
+  const handleSessionExpired = async () => {
+    try {
+      // Call logout API
+      await authAPI.logout();
+    } catch (error) {
+      console.error('Session expired logout error:', error);
+    } finally {
+      // Clear local storage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Navigate to login
       navigate('/login');
     }
   };
@@ -406,6 +431,17 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
         confirmText="Yes, Logout"
         cancelText="Cancel"
         showCancel={true}
+      />
+
+      <AlertDialog
+        isOpen={sessionExpired}
+        type="warning"
+        title="Session Expired"
+        message="Your session has expired due to inactivity. Please click OK to log in again."
+        onClose={null}
+        onConfirm={handleSessionExpired}
+        confirmText="OK"
+        showCancel={false}
       />
     </LayoutContainer>
   );
