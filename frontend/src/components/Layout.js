@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import colors, { spacing, borderRadius, fontSize, fontWeight } from '../styles/colors';
@@ -25,36 +25,51 @@ const Sidebar = styled.div`
 `;
 
 const SidebarHeader = styled.div`
-  padding: 0 ${spacing.lg} ${spacing.lg} ${spacing.lg};
+  padding: 0 ${spacing.lg} ${spacing.sm} ${spacing.lg};
   border-bottom: 1px solid ${colors.border.light};
-  margin-bottom: ${spacing.lg};
-`;
-
-const Logo = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: ${spacing.sm};
 `;
 
-const LogoIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, ${colors.primary.orange} 0%, #FFB84D 100%);
-  border-radius: ${borderRadius.sm};
+const RestaurantLogo = styled.div`
+  width: 60px;
+  height: 60px;
+  border-radius: ${borderRadius.md};
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${fontSize.lg};
-  color: white;
-  font-weight: ${fontWeight.bold};
+  background-color: ${colors.background.tertiary};
+  border: 2px solid ${colors.border.light};
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `;
 
-const LogoText = styled.h1`
-  font-size: ${fontSize.xl};
+const RestaurantName = styled.h1`
+  font-size: ${fontSize.lg};
   font-weight: ${fontWeight.bold};
   color: ${colors.text.primary};
   margin: 0;
+  text-align: center;
+  line-height: 1.2;
 `;
+
+const DefaultLogo = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: ${colors.text.tertiary};
+`;
+
 
 const MenuItem = styled.div`
   display: flex;
@@ -157,6 +172,31 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [itemsDropdownOpen, setItemsDropdownOpen] = useState(false);
   const [staffDropdownOpen, setStaffDropdownOpen] = useState(false);
+  const [restaurantName, setRestaurantName] = useState('');
+  const [restaurantLogo, setRestaurantLogo] = useState('');
+
+  // Load restaurant name and logo from localStorage
+  useEffect(() => {
+    const savedName = localStorage.getItem('outletName') || '';
+    const savedLogo = localStorage.getItem('restaurantLogo') || '';
+    setRestaurantName(savedName);
+    setRestaurantLogo(savedLogo);
+  }, []);
+
+  // Listen for changes in localStorage (when settings are updated)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'outletName') {
+        setRestaurantName(e.newValue || '');
+      }
+      if (e.key === 'restaurantLogo') {
+        setRestaurantLogo(e.newValue || '');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   // Inactivity timeout - configured in constants/config.js
   useInactivityTimeout(SESSION_CONFIG.INACTIVITY_TIMEOUT_MINUTES * 60 * 1000, () => {
@@ -314,17 +354,28 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
     navigate('/qr');
   };
 
+  // Handle Settings navigation
+  const handleSettings = () => {
+    navigate('/settings');
+  };
+
   return (
     <LayoutContainer>
       <Sidebar>
         <SidebarHeader>
-          <Logo>
-            <LogoIcon>🔥</LogoIcon>
-            <LogoText>Metor</LogoText>
-          </Logo>
+          <RestaurantLogo>
+            {restaurantLogo ? (
+              <img src={restaurantLogo} alt="Restaurant Logo" />
+            ) : (
+              <DefaultLogo>🏪</DefaultLogo>
+            )}
+          </RestaurantLogo>
+          {restaurantName && (
+            <RestaurantName>{restaurantName}</RestaurantName>
+          )}
         </SidebarHeader>
 
-        <div style={{ padding: `${spacing.lg} 0`, flex: 1, paddingBottom: '80px' }}>
+        <div style={{ padding: `0 0 ${spacing.lg} 0`, flex: 1, paddingBottom: '80px' }}>
           <MenuItem active={currentPage === 'dashboard'} onClick={handleDashboard}>
             <MenuIcon active={currentPage === 'dashboard'}>📊</MenuIcon>
             <MenuText>DASHBOARD</MenuText>
@@ -396,6 +447,12 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
             <MenuIcon active={currentPage === 'qr'}>📱</MenuIcon>
             <MenuText>QR</MenuText>
           </MenuItem>
+
+          {/* Settings Section */}
+          <MenuItem onClick={handleSettings} active={currentPage === 'settings'}>
+            <MenuIcon active={currentPage === 'settings'}>⚙️</MenuIcon>
+            <MenuText>SETTINGS</MenuText>
+          </MenuItem>
         </div>
 
         <div style={{ 
@@ -406,7 +463,7 @@ const Layout = ({ children, currentPage = 'dashboard', showToast }) => {
           backgroundColor: colors.background.primary
         }}>
           <MenuItem onClick={() => setLogoutConfirm(true)} style={{ 
-            borderTop: '1px solid #f0f0f0', 
+            borderTop: `1px solid ${colors.border.subtle}`, 
             paddingTop: spacing.md,
             margin: 0,
             borderRadius: 0

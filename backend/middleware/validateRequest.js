@@ -521,3 +521,45 @@ exports.deleteTableValidation = [
     .withMessage('Invalid table ID format'),
 ];
 
+/**
+ * Validation rules for updating settings
+ */
+exports.updateSettingsValidation = [
+  body('logo')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Logo URL cannot exceed 500 characters'),
+
+  body('showCuisineFilter')
+    .optional()
+    .isBoolean()
+    .withMessage('showCuisineFilter must be a boolean (true or false)'),
+
+  body('showModifiers')
+    .optional()
+    .isBoolean()
+    .withMessage('showModifiers must be a boolean (true or false)'),
+
+  body('showModifiersPrice')
+    .optional()
+    .isBoolean()
+    .withMessage('showModifiersPrice must be a boolean (true or false)'),
+
+  body('outletName')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Outlet name cannot be empty')
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Outlet name must be between 2 and 100 characters'),
+
+  body('outletCurrency')
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage('Currency code cannot be empty')
+    .isLength({ min: 1, max: 10 })
+    .withMessage('Currency code must be between 1 and 10 characters'),
+];
+

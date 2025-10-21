@@ -88,4 +88,9 @@ export const uploadAPI = {
   }),
 };
 
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (settingsData) => api.post('/settings/update', settingsData),
+};
+
 export default api;

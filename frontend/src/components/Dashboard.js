@@ -1,11 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import colors, { spacing, borderRadius, fontSize, fontWeight } from '../styles/colors';
+import colors, { spacing, borderRadius, fontSize, fontWeight, getThemeColors } from '../styles/colors';
 import Layout from './Layout';
 
 // Styled Components
 const DashboardContent = styled.div`
   padding: ${spacing.lg};
+`;
+
+const DashboardHeader = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: ${spacing.lg};
+`;
+
+const ThemeToggle = styled.div`
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.background.primary};
+  border: 1px solid ${colors.border.light};
+  border-radius: ${borderRadius.lg};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 24px;
+
+  &:hover {
+    border-color: ${colors.primary.purple};
+    box-shadow: 0 2px 8px ${colors.shadow.light};
+    transform: scale(1.05);
+  }
 `;
 
 
@@ -37,17 +63,17 @@ const SearchInput = styled.input`
   padding: ${spacing.md};
   border: none;
   border-radius: ${borderRadius.md};
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: ${colors.overlay.whiteLight};
   color: ${colors.text.white};
   font-size: ${fontSize.md};
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+    color: ${colors.overlay.whiteText};
   }
 
   &:focus {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: ${colors.overlay.whiteMedium};
   }
 `;
 
@@ -68,7 +94,7 @@ const IconButton = styled.button`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: ${colors.overlay.whiteLight};
   }
 `;
 
@@ -322,13 +348,19 @@ const TrendingOrders = styled.div`
 
 // Main Dashboard Component
 const Dashboard = ({ showToast }) => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Toggle icon
+  const toggleIcon = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   // Mock data
   const stats = [
     {
       label: 'TOTAL REVENUE',
-      value: '$35,428.09',
-      icon: '$',
+      value: '35,428.09',
+      icon: '💰',
       color: colors.primary.purple,
     },
     {
@@ -375,13 +407,13 @@ const Dashboard = ({ showToast }) => {
   const trendingItems = [
     {
       name: 'Italian Burata Pizza',
-      price: '$12.00',
+      price: '12.00',
       orders: '22x',
       icon: '🍕',
     },
     {
       name: 'Veg Indian Thali',
-      price: '$14.00',
+      price: '14.00',
       orders: '13x',
       icon: '🍛',
     },
@@ -390,26 +422,11 @@ const Dashboard = ({ showToast }) => {
   return (
     <Layout currentPage="dashboard">
       <DashboardContent>
-        <Header>
-          <HeaderLeft>
-            <SearchBar>
-              <SearchInput placeholder="Start typing..." />
-            </SearchBar>
-          </HeaderLeft>
-          <HeaderRight>
-            <IconButton style={{ position: 'relative' }}>
-              🌙
-            </IconButton>
-            <IconButton style={{ position: 'relative' }}>
-              🔔
-              <NotificationBadge>18</NotificationBadge>
-            </IconButton>
-            <UserProfile>
-              <UserAvatar>DL</UserAvatar>
-              <UserName>DORIS LIETZ</UserName>
-            </UserProfile>
-          </HeaderRight>
-        </Header>
+        <DashboardHeader>
+          <ThemeToggle onClick={toggleIcon}>
+            {isDarkMode ? '🌙' : '☀️'}
+          </ThemeToggle>
+        </DashboardHeader>
 
         <StatsGrid>
           {stats.map((stat, index) => (

@@ -34,7 +34,7 @@ const Subtitle = styled.p`
 const ContentContainer = styled.div`
   background-color: ${colors.background.primary};
   border-radius: ${borderRadius.lg};
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px ${colors.shadow.light};
   padding: ${spacing.xl};
 `;
 
@@ -64,7 +64,7 @@ const Select = styled.select`
 
   &:focus {
     border-color: ${colors.primary.purple};
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    box-shadow: 0 0 0 3px ${colors.shadow.purpleLight};
   }
 `;
 
@@ -103,7 +103,7 @@ const QRCodeWrapper = styled.div`
   padding: ${spacing.md};
   background-color: white;
   border-radius: ${borderRadius.sm};
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px ${colors.shadow.light};
 `;
 
 const DownloadQRContainer = styled.div`
@@ -234,7 +234,7 @@ const GenerateButton = styled.button`
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 4px 12px ${colors.shadow.purple};
   }
 
   &:active:not(:disabled) {

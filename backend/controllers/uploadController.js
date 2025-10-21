@@ -16,10 +16,16 @@ const storage = multer.diskStorage({
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    // Generate unique filename with timestamp
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const extension = path.extname(file.originalname);
-    cb(null, `item-${uniqueSuffix}${extension}`);
+    // Check if this is a logo upload (based on original filename)
+    if (file.originalname === 'app-logo.png' || file.fieldname === 'logo') {
+      const extension = path.extname(file.originalname);
+      cb(null, `app-logo${extension}`);
+    } else {
+      // Generate unique filename with timestamp for regular items
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const extension = path.extname(file.originalname);
+      cb(null, `item-${uniqueSuffix}${extension}`);
+    }
   }
 });
 

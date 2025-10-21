@@ -30,7 +30,7 @@ const Overlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${colors.shadow.dark};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,10 +58,10 @@ const IconContainer = styled.div`
   border-radius: 50%;
   margin: 0 auto ${spacing.lg} auto;
   background-color: ${props => 
-    props.type === 'error' ? 'rgba(231, 76, 60, 0.1)' :
-    props.type === 'success' ? 'rgba(39, 174, 96, 0.1)' :
-    props.type === 'warning' ? 'rgba(243, 156, 18, 0.1)' :
-    'rgba(52, 152, 219, 0.1)'
+    props.type === 'error' ? `${colors.status.error}1A` :
+    props.type === 'success' ? `${colors.status.success}1A` :
+    props.type === 'warning' ? `${colors.status.warning}1A` :
+    `${colors.status.info}1A`
   };
 `;
 
@@ -112,7 +112,7 @@ const Button = styled.button`
     color: ${colors.text.white};
 
     &:hover {
-      background-color: ${props.type === 'error' ? '#C0392B' : colors.primary.purpleHover};
+      background-color: ${props.type === 'error' ? colors.status.error : colors.primary.purpleHover};
       transform: translateY(-1px);
     }
 

@@ -30,6 +30,7 @@ export const colors = {
     light: '#DCDCDC',       // Light gray for input borders
     medium: '#BDC3C7',      // Medium gray for checkboxes
     dark: '#34495E',        // Dark gray for focused borders
+    subtle: '#f0f0f0',      // Very light gray for subtle borders
   },
 
   // Status Colors
@@ -61,7 +62,18 @@ export const colors = {
     light: 'rgba(0, 0, 0, 0.1)',    // Light shadow
     medium: 'rgba(0, 0, 0, 0.15)',  // Medium shadow
     dark: 'rgba(0, 0, 0, 0.2)',     // Dark shadow
+    purple: 'rgba(124, 58, 237, 0.3)', // Purple shadow for buttons
+    purpleLight: 'rgba(124, 58, 237, 0.1)', // Light purple shadow for focus
   },
+
+  // Overlay Colors
+  overlay: {
+    white: 'rgba(255, 255, 255, 0.95)', // White overlay
+    whiteLight: 'rgba(255, 255, 255, 0.1)', // Light white overlay
+    whiteMedium: 'rgba(255, 255, 255, 0.2)', // Medium white overlay
+    whiteText: 'rgba(255, 255, 255, 0.7)', // White text with opacity
+  },
+
 };
 
 // Dark Theme Colors (for future implementation)
@@ -90,6 +102,7 @@ export const darkColors = {
     light: '#4A6572',       // Darker gray for input borders
     medium: '#5D6D7E',      // Medium dark gray for checkboxes
     dark: '#6A3FFB',        // Purple for focused borders
+    subtle: '#34495E',      // Dark gray for subtle borders
   },
 
   // Status Colors (same)
@@ -116,6 +129,16 @@ export const darkColors = {
     light: 'rgba(0, 0, 0, 0.3)',    // Darker shadow
     medium: 'rgba(0, 0, 0, 0.4)',   // Medium dark shadow
     dark: 'rgba(0, 0, 0, 0.5)',     // Very dark shadow
+    purple: 'rgba(124, 58, 237, 0.4)', // Purple shadow for buttons (darker)
+    purpleLight: 'rgba(124, 58, 237, 0.2)', // Light purple shadow for focus (darker)
+  },
+
+  // Overlay Colors (adjusted for dark theme)
+  overlay: {
+    white: 'rgba(255, 255, 255, 0.1)', // Dark white overlay
+    whiteLight: 'rgba(255, 255, 255, 0.05)', // Very light white overlay
+    whiteMedium: 'rgba(255, 255, 255, 0.1)', // Light white overlay
+    whiteText: 'rgba(255, 255, 255, 0.8)', // White text with opacity
   },
 };
 

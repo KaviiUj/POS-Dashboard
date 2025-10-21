@@ -25,25 +25,6 @@ const LoginCard = styled.div`
   animation: slideUp 0.3s ease-out;
 `;
 
-const Logo = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: ${spacing.lg};
-`;
-
-const LogoIcon = styled.div`
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, ${colors.primary.orange} 0%, #FFB84D 100%);
-  border-radius: ${borderRadius.sm};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: ${fontSize.lg};
-  color: white;
-  font-weight: ${fontWeight.bold};
-`;
 
 const WelcomeSection = styled.div`
   text-align: center;
@@ -233,10 +214,6 @@ const LoginForm = ({ showToast }) => {
   return (
     <LoginContainer>
       <LoginCard className="fade-in">
-        <Logo>
-          <LogoIcon>🔥</LogoIcon>
-        </Logo>
-
         <WelcomeSection>
           <WelcomeTitle>
             Hi, Welcome Back 👋

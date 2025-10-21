@@ -44,6 +44,7 @@ const itemRoutes = require('./routes/itemRoutes');
 const staffRoutes = require('./routes/staffRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const tableRoutes = require('./routes/tableRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
@@ -52,6 +53,7 @@ app.use('/api/item', itemRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/table', tableRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Basic health check route
 app.get('/api/health', (req, res) => {

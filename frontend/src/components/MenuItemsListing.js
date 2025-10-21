@@ -608,7 +608,7 @@ const MenuItemsListing = ({ showToast }) => {
                     </Modifiers>
                   </TableCell>
                         <TableCell>
-                          <Price>${item.price || '0.00'}</Price>
+                          <Price>{item.price || '0.00'}</Price>
                         </TableCell>
                         <TableCell>
                           <Discount>{item.discount || 0}%</Discount>
