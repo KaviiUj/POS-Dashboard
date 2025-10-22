@@ -86,7 +86,7 @@ The backend server will run on `http://localhost:5000`
 
 1. Navigate to the frontend directory:
    ```bash
-   cd frontEnd
+   cd frontend
    ```
 
 2. Install dependencies:
@@ -94,20 +94,58 @@ The backend server will run on `http://localhost:5000`
    npm install
    ```
 
-3. Start the development server:
+3. Create a `.env` file in the frontend directory:
+   ```bash
+   echo "PORT=5173" > .env
+   ```
+
+4. Start the development server:
    ```bash
    npm start
    ```
 
-The frontend application will run on `http://localhost:3000`
+The frontend application will run on `http://localhost:5173`
+
+### Run Both Backend and Frontend Together
+
+From the root directory, you can run both servers simultaneously:
+
+```bash
+npm run dev
+```
+
+This will start:
+- Backend server on `http://localhost:5000`
+- Frontend application on `http://localhost:5173`
+
+## Features
+
+### QR Code Table Management
+
+The application includes a QR code generation feature for restaurant tables:
+
+- Generate QR codes for each table
+- Encrypted table data (tableName and tableId) for security
+- When scanned, customers are automatically redirected to the login page with encrypted table information
+- QR codes can be downloaded as PNG images for printing
+
+**QR Code URL Format:**
+```
+http://192.168.1.7:5173/login?token=<encrypted_table_data>
+```
+
+The encryption uses Base64 encoding for basic obfuscation of table information.
+
+**Encryption Utilities:**
+Located in `frontend/src/utils/encryption.js`, provides:
+- `encrypt(value)` - Encrypt a single value
+- `decrypt(encryptedValue)` - Decrypt a value
+- `encryptParams(params)` - Encrypt multiple parameters into a token
+- `decryptParams(token)` - Decrypt parameters from a token
 
 ## API Endpoints
 
 (To be documented as routes are implemented)
-
-## Features
-
-(To be documented as features are implemented)
 
 ## Contributing
 

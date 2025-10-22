@@ -10,7 +10,7 @@ export const SESSION_CONFIG = {
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:3001/api',
+  BASE_URL: 'http://localhost:5000/api',
 };
 
 // Upload Configuration
@@ -33,11 +33,17 @@ export const TOAST_CONFIG = {
   WARNING_DURATION: 4000,
 };
 
+// QR Code Configuration
+export const QR_CONFIG = {
+  LOGIN_URL: 'http://192.168.1.7:5173/login',
+};
+
 export default {
   SESSION_CONFIG,
   API_CONFIG,
   UPLOAD_CONFIG,
   PAGINATION_CONFIG,
   TOAST_CONFIG,
+  QR_CONFIG,
 };
 

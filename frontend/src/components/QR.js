@@ -5,6 +5,8 @@ import html2canvas from 'html2canvas';
 import Layout from './Layout';
 import { tableAPI } from '../services/api';
 import colors, { spacing, borderRadius, fontSize, fontWeight } from '../styles/colors';
+import { QR_CONFIG } from '../constants/config';
+import { encryptParams } from '../utils/encryption';
 
 // Styled Components
 const Container = styled.div`
@@ -321,14 +323,18 @@ const QR = ({ showToast }) => {
     
     const selectedTableData = tables.find(t => t.tableId === selectedTable);
     
-    // Create JSON data for QR code
-    const qrJsonData = {
+    // Encrypt table data
+    const tableData = {
       tableName: selectedTableData.tableName,
-      tableId: selectedTableData.tableId,
-      url: "https://preview.themeforest.net/item/metor-codeigniter-4-restaurant-food-admin-dashboard-template/full_screen_preview/59980255"
+      tableId: selectedTableData.tableId
     };
     
-    setQrData(JSON.stringify(qrJsonData));
+    const encryptedToken = encryptParams(tableData);
+    
+    // Create direct URL with encrypted token that opens immediately when scanned
+    const qrUrl = `${QR_CONFIG.LOGIN_URL}?t=${encryptedToken}`;
+    
+    setQrData(qrUrl);
     setQrGenerated(true);
     showToast(`QR code generated for ${selectedTableData?.tableName}!`, 'success', 'QR Generated', 3000);
   };
