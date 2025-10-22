@@ -271,8 +271,9 @@ exports.updateCategory = async (req, res, next) => {
       }
     }
 
-    // Store old name for logging
+    // Store old values for logging
     const oldCategoryName = category.categoryName;
+    const oldDiscount = category.discount;
 
     // Update category
     category.categoryName = categoryName;
@@ -282,6 +283,33 @@ exports.updateCategory = async (req, res, next) => {
     category.updatedBy = userId;
     await category.save();
 
+    // If discount is updated, update all items under this category
+    let affectedItemsCount = 0;
+    let discountMessage = '';
+    
+    if (discount !== undefined && discount !== oldDiscount) {
+      const result = await Item.updateMany(
+        { categoryId: categoryId },
+        { 
+          $set: { 
+            discount: discount,
+            updatedBy: userId 
+          } 
+        }
+      );
+      affectedItemsCount = result.modifiedCount;
+      discountMessage = affectedItemsCount > 0 ? `. ${affectedItemsCount} item(s) discount also updated.` : '';
+
+      logger.info('Updated items discount under category', {
+        categoryId: category._id.toString(),
+        categoryName: category.categoryName,
+        oldDiscount,
+        newDiscount: discount,
+        itemsUpdated: affectedItemsCount,
+        updatedBy: userId.toString(),
+      });
+    }
+
     // Populate user details
     await category.populate('createdBy updatedBy', 'userName role');
 
@@ -289,18 +317,22 @@ exports.updateCategory = async (req, res, next) => {
       categoryId: category._id.toString(),
       oldName: oldCategoryName,
       newName: category.categoryName,
+      oldDiscount,
+      newDiscount: category.discount,
+      itemsAffected: affectedItemsCount,
       updatedBy: userId.toString(),
       updatedByName: userName,
     });
 
     res.status(200).json({
       success: true,
-      message: 'Category updated successfully',
+      message: `Category updated successfully${discountMessage}`,
       data: {
         categoryId: category._id,
         categoryName: category.categoryName,
         discount: category.discount,
         isActive: category.isActive,
+        itemsAffected: affectedItemsCount,
         createdBy: category.createdBy
           ? {
               userId: category.createdBy._id,
