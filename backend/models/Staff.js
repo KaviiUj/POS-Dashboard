@@ -31,6 +31,14 @@ const staffSchema = new mongoose.Schema(
       trim: true,
       match: [/^[0-9]{10,15}$/, 'Please provide a valid mobile number'],
     },
+    email: {
+      type: String,
+      required: [true, 'Email address is required'],
+      trim: true,
+      lowercase: true,
+      match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
+      maxlength: [255, 'Email cannot exceed 255 characters'],
+    },
     address: {
       type: String,
       trim: true,
@@ -70,6 +78,7 @@ const staffSchema = new mongoose.Schema(
 staffSchema.index({ staffName: 1 });
 staffSchema.index({ nic: 1 });
 staffSchema.index({ mobileNumber: 1 });
+staffSchema.index({ email: 1 });
 staffSchema.index({ isActive: 1 });
 staffSchema.index({ createdBy: 1 });
 

@@ -71,6 +71,13 @@ const TableCell = styled.td`
   vertical-align: middle;
 `;
 
+const AddressCell = styled(TableCell)`
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StaffInfo = styled.div`
   display: flex;
   align-items: center;
@@ -410,6 +417,7 @@ const StaffListing = ({ showToast }) => {
                 <TableRow>
                   <TableHeaderCell>Staff Name</TableHeaderCell>
                   <TableHeaderCell>Contact No.</TableHeaderCell>
+                  <TableHeaderCell>Email</TableHeaderCell>
                   <TableHeaderCell>Address</TableHeaderCell>
                   <TableHeaderCell>NIC</TableHeaderCell>
                   <TableHeaderCell>Status</TableHeaderCell>
@@ -438,8 +446,11 @@ const StaffListing = ({ showToast }) => {
                       <DetailValue>{staffMember.mobileNumber}</DetailValue>
                     </TableCell>
                     <TableCell>
-                      <DetailValue>{staffMember.address}</DetailValue>
+                      <DetailValue>{staffMember.email || '-'}</DetailValue>
                     </TableCell>
+                    <AddressCell title={staffMember.address || ''}>
+                      <DetailValue>{staffMember.address || '-'}</DetailValue>
+                    </AddressCell>
                     <TableCell>
                       <DetailValue>{staffMember.nic}</DetailValue>
                     </TableCell>

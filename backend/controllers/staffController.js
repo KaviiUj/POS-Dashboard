@@ -14,6 +14,7 @@ exports.createStaff = async (req, res, next) => {
       password,
       role,
       mobileNumber,
+      email,
       address,
       nic,
       profileImageUrl,
@@ -69,6 +70,7 @@ exports.createStaff = async (req, res, next) => {
       staffName,
       password,
       role: role || 89, // Default to 89 (Staff)
+      email, // Email is required
       createdBy: userId,
     };
 
@@ -99,6 +101,7 @@ exports.createStaff = async (req, res, next) => {
         staffName: staff.staffName,
         role: staff.role,
         mobileNumber: staff.mobileNumber,
+        email: staff.email,
         address: staff.address,
         nic: staff.nic,
         profileImageUrl: staff.profileImageUrl,
@@ -158,6 +161,7 @@ exports.updateStaff = async (req, res, next) => {
       staffId,
       staffName,
       mobileNumber,
+      email,
       address,
       nic,
       profileImageUrl,
@@ -234,6 +238,7 @@ exports.updateStaff = async (req, res, next) => {
     // Update staff fields
     if (staffName) staff.staffName = staffName;
     if (mobileNumber !== undefined) staff.mobileNumber = mobileNumber;
+    if (email !== undefined) staff.email = email; // Email is required
     if (address !== undefined) staff.address = address;
     if (nic !== undefined) staff.nic = nic;
     if (profileImageUrl !== undefined) staff.profileImageUrl = profileImageUrl;
@@ -263,6 +268,7 @@ exports.updateStaff = async (req, res, next) => {
         staffName: staff.staffName,
         role: staff.role,
         mobileNumber: staff.mobileNumber,
+        email: staff.email,
         address: staff.address,
         nic: staff.nic,
         profileImageUrl: staff.profileImageUrl,
@@ -562,6 +568,7 @@ exports.getAllStaff = async (req, res, next) => {
         staffName: staff.staffName,
         role: staff.role,
         mobileNumber: staff.mobileNumber,
+        email: staff.email,
         address: staff.address,
         nic: staff.nic,
         profileImageUrl: staff.profileImageUrl,

@@ -330,6 +330,7 @@ const CreateStaffModal = ({ isOpen, onClose, onStaffCreated, showToast }) => {
     password: '',
     role: 89,
     mobileNumber: '',
+    email: '',
     address: '',
     nic: '',
     profileImageUrl: ''
@@ -435,6 +436,18 @@ const CreateStaffModal = ({ isOpen, onClose, onStaffCreated, showToast }) => {
       return;
     }
 
+    if (!formData.email.trim()) {
+      showToast('Email address is required', 'error', 'Validation Error', 3000);
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      showToast('Please provide a valid email address', 'error', 'Validation Error', 3000);
+      return;
+    }
+
     if (!formData.nic.trim()) {
       showToast('NIC is required', 'error', 'Validation Error', 3000);
       return;
@@ -447,6 +460,7 @@ const CreateStaffModal = ({ isOpen, onClose, onStaffCreated, showToast }) => {
         password: formData.password,
         role: formData.role,
         mobileNumber: formData.mobileNumber,
+        email: formData.email,
         address: formData.address,
         nic: formData.nic,
         profileImageUrl: formData.profileImageUrl
@@ -467,6 +481,7 @@ const CreateStaffModal = ({ isOpen, onClose, onStaffCreated, showToast }) => {
           password: '',
           role: 89,
           mobileNumber: '',
+          email: '',
           address: '',
           nic: '',
           profileImageUrl: ''
@@ -490,6 +505,7 @@ const CreateStaffModal = ({ isOpen, onClose, onStaffCreated, showToast }) => {
       password: '',
       role: 89,
       mobileNumber: '',
+      email: '',
       address: '',
       nic: '',
       profileImageUrl: ''
@@ -602,6 +618,20 @@ const CreateStaffModal = ({ isOpen, onClose, onStaffCreated, showToast }) => {
                   value={formData.mobileNumber}
                   onChange={handleInputChange}
                   placeholder="Enter mobile number"
+                  required
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>
+                  Email Address <RequiredIndicator>*</RequiredIndicator>
+                </Label>
+                <Input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter email address"
                   required
                 />
               </FormGroup>

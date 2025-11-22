@@ -328,6 +328,7 @@ const EditStaffModal = ({ isOpen, staff, onClose, onUpdate, showToast }) => {
   const [formData, setFormData] = useState({
     staffName: '',
     mobileNumber: '',
+    email: '',
     address: '',
     profileImageUrl: ''
   });
@@ -344,6 +345,7 @@ const EditStaffModal = ({ isOpen, staff, onClose, onUpdate, showToast }) => {
       setFormData({
         staffName: staff.staffName || '',
         mobileNumber: staff.mobileNumber || '',
+        email: staff.email || '',
         address: staff.address || '',
         profileImageUrl: staff.profileImageUrl || ''
       });
@@ -440,12 +442,25 @@ const EditStaffModal = ({ isOpen, staff, onClose, onUpdate, showToast }) => {
       return;
     }
 
+    if (!formData.email.trim()) {
+      showToast('Email address is required', 'error', 'Validation Error', 3000);
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      showToast('Please provide a valid email address', 'error', 'Validation Error', 3000);
+      return;
+    }
+
     setLoading(true);
     try {
       const staffData = {
         staffId: staff.staffId,
         staffName: formData.staffName,
         mobileNumber: formData.mobileNumber,
+        email: formData.email,
         address: formData.address,
         profileImageUrl: formData.profileImageUrl
       };
@@ -471,6 +486,7 @@ const EditStaffModal = ({ isOpen, staff, onClose, onUpdate, showToast }) => {
     setFormData({
       staffName: '',
       mobileNumber: '',
+      email: '',
       address: '',
       profileImageUrl: ''
     });
@@ -568,6 +584,20 @@ const EditStaffModal = ({ isOpen, staff, onClose, onUpdate, showToast }) => {
                   value={formData.mobileNumber}
                   onChange={handleInputChange}
                   placeholder="Enter mobile number"
+                  required
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>
+                  Email Address <RequiredIndicator>*</RequiredIndicator>
+                </Label>
+                <Input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter email address"
                   required
                 />
               </FormGroup>
