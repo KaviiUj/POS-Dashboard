@@ -20,6 +20,11 @@ const modifierSchema = new mongoose.Schema(
 
 const itemSchema = new mongoose.Schema(
   {
+    restaurantCode: {
+      type: String,
+      required: [true, 'Restaurant code is required'],
+      trim: true,
+    },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
@@ -93,6 +98,7 @@ const itemSchema = new mongoose.Schema(
 );
 
 // Indexes for faster queries
+itemSchema.index({ restaurantCode: 1 });
 itemSchema.index({ categoryId: 1 });
 itemSchema.index({ itemName: 1 });
 itemSchema.index({ isVeg: 1 });
@@ -102,6 +108,7 @@ itemSchema.index({ createdBy: 1 });
 
 // Compound index for category and active items
 itemSchema.index({ categoryId: 1, isActive: 1 });
+itemSchema.index({ restaurantCode: 1, categoryId: 1 });
 
 // Transform output
 itemSchema.methods.toJSON = function () {

@@ -4,10 +4,14 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
+    restaurantCode: {
+      type: String,
+      required: [true, 'Restaurant code is required'],
+      trim: true,
+    },
     userName: {
       type: String,
       required: [true, 'Username is required'],
-      unique: true,
       trim: true,
       minlength: [3, 'Username must be at least 3 characters long'],
       maxlength: [50, 'Username cannot exceed 50 characters'],
@@ -37,8 +41,10 @@ const userSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
+userSchema.index({ restaurantCode: 1 });
 userSchema.index({ userName: 1 });
 userSchema.index({ role: 1 });
+userSchema.index({ restaurantCode: 1, userName: 1 }, { unique: true }); // Unique username per restaurant
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {

@@ -4,6 +4,11 @@ const bcrypt = require('bcryptjs');
 
 const staffSchema = new mongoose.Schema(
   {
+    restaurantCode: {
+      type: String,
+      required: [true, 'Restaurant code is required'],
+      trim: true,
+    },
     staffName: {
       type: String,
       required: [true, 'Staff name is required'],
@@ -75,12 +80,15 @@ const staffSchema = new mongoose.Schema(
 );
 
 // Indexes for faster queries
+staffSchema.index({ restaurantCode: 1 });
 staffSchema.index({ staffName: 1 });
 staffSchema.index({ nic: 1 });
 staffSchema.index({ mobileNumber: 1 });
 staffSchema.index({ email: 1 });
 staffSchema.index({ isActive: 1 });
 staffSchema.index({ createdBy: 1 });
+staffSchema.index({ restaurantCode: 1, email: 1 }, { unique: true }); // Unique email per restaurant
+staffSchema.index({ restaurantCode: 1, nic: 1 }, { unique: true, sparse: true }); // Unique NIC per restaurant
 
 // Hash password before saving
 staffSchema.pre('save', async function (next) {

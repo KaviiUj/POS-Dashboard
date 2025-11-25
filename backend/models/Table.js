@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 
 const tableSchema = new mongoose.Schema(
   {
+    restaurantCode: {
+      type: String,
+      required: [true, 'Restaurant code is required'],
+      trim: true,
+    },
     tableName: {
       type: String,
       required: [true, 'Table name is required'],
@@ -32,9 +37,11 @@ const tableSchema = new mongoose.Schema(
 );
 
 // Index for faster queries
+tableSchema.index({ restaurantCode: 1 });
 tableSchema.index({ tableName: 1 });
 tableSchema.index({ isAvailable: 1 });
 tableSchema.index({ orderId: 1 });
+tableSchema.index({ restaurantCode: 1, tableName: 1 }, { unique: true }); // Unique table name per restaurant
 
 // Transform output
 tableSchema.methods.toJSON = function () {

@@ -3,10 +3,14 @@ const mongoose = require('mongoose');
 
 const categorySchema = new mongoose.Schema(
   {
+    restaurantCode: {
+      type: String,
+      required: [true, 'Restaurant code is required'],
+      trim: true,
+    },
     categoryName: {
       type: String,
       required: [true, 'Category name is required'],
-      unique: true,
       trim: true,
       minlength: [2, 'Category name must be at least 2 characters long'],
       maxlength: [100, 'Category name cannot exceed 100 characters'],
@@ -37,9 +41,11 @@ const categorySchema = new mongoose.Schema(
 );
 
 // Index for faster queries
+categorySchema.index({ restaurantCode: 1 });
 categorySchema.index({ categoryName: 1 });
 categorySchema.index({ isActive: 1 });
 categorySchema.index({ createdBy: 1 });
+categorySchema.index({ restaurantCode: 1, categoryName: 1 }, { unique: true }); // Unique category name per restaurant
 
 // Transform output
 categorySchema.methods.toJSON = function () {

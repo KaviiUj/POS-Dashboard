@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 
 const settingsSchema = new mongoose.Schema(
   {
+    restaurantCode: {
+      type: String,
+      required: [true, 'Restaurant code is required'],
+      trim: true,
+      unique: true,
+    },
     logo: {
       type: String,
       default: '',
@@ -44,6 +50,9 @@ const settingsSchema = new mongoose.Schema(
   }
 );
 
+// Index for faster queries
+settingsSchema.index({ restaurantCode: 1 });
+
 // Transform output
 settingsSchema.methods.toJSON = function () {
   const settings = this.toObject();
@@ -52,12 +61,17 @@ settingsSchema.methods.toJSON = function () {
 };
 
 // Static method to get or create settings (singleton pattern)
-settingsSchema.statics.getSettings = async function () {
-  let settings = await this.findOne();
+settingsSchema.statics.getSettings = async function (restaurantCode) {
+  if (!restaurantCode) {
+    throw new Error('Restaurant code is required');
+  }
+  
+  let settings = await this.findOne({ restaurantCode });
   
   // If no settings exist, create default settings
   if (!settings) {
     settings = await this.create({
+      restaurantCode,
       logo: '',
       showCuisineFilter: false,
       showModifiers: false,
