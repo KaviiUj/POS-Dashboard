@@ -10,7 +10,7 @@ export const SESSION_CONFIG = {
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:5000/api',
+  BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
 };
 
 // Upload Configuration
@@ -35,7 +35,7 @@ export const TOAST_CONFIG = {
 
 // QR Code Configuration
 export const QR_CONFIG = {
-  LOGIN_URL: 'http://192.168.1.7:5173/login',
+  LOGIN_URL: 'http://216.158.229.227:4002/login',
 };
 
 export default {
